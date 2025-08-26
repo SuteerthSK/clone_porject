@@ -11,6 +11,9 @@ use App\Http\Controllers\ReadingChallengeController;
 
 // Home
 Route::get('/', function() { return view('welcome'); })->name('home');
+Route::get('/register', function() { return view('auth.register'); })->name('auth.register');
+Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
+// Route::get('/login', function() { return view('auth.login'); })->name('auth.login');
 // Route::view('/register', 'auth.register')->name('auth.register');
 // Route::view('/login', 'auth.login')->name('auth.login');
 
@@ -19,11 +22,12 @@ Route::get('/', function() { return view('welcome'); })->name('home');
 Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
  Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
  Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('authors.show');
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
 
 // // Auth (JWT)
 Route::view('/auth/register', 'auth.register')->name('auth.register.view');
- Route::view('/auth/login', 'auth.login')->name('auth.login.view');
-// Route::get('/auth/login', [AuthController::class, 'register'])->name('auth.register');
+Route::view('/auth/login', 'auth.login')->name('auth.login.view');
+// Route::get('/login', [AuthController::class, 'register'])->name('auth.register.view');
 // Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
 
 // // Protected API-like routes guarded by JWT

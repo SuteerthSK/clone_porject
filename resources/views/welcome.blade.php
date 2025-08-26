@@ -53,27 +53,32 @@
       line-height: 1.5;
     }
     .btn {
-      display: inline-block;
-      margin: 10px;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    .btn-primary {
-      background: #0073e6;
-      color: #fff;
-    }
-    .btn-dark {
-      background: #333;
-      color: #fff;
-    }
-    .btn-light {
-      background: #fff;
-      color: #333;
-      border: 1px solid #333;
-    }
+  display: inline-block;
+  margin: 10px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;  /* removes underline */
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #0073e6;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #005bb5;
+}
+
+.btn-dark {
+  background: #333;
+  color: #fff;
+}
+.btn-dark:hover {
+  background: #000;
+}
+
     footer {
       text-align: center;
       padding: 20px;
@@ -103,8 +108,9 @@
       Connect with friends and see what they’re reading on Goodreads Clone.</p>
 
       <!-- Buttons -->
-      <button class="btn btn-dark"><a href="{{ route('auth.register.view') }}">Register</a></button>
-      <button class="btn btn-primary"><a href="{{ route('auth.login.view') }}">Login</a></button>
+      <a href="{{ route('auth.register.view') }}" class="btn btn-dark">Register</a>
+      <a href="{{ route('auth.login.view') }}" class="btn btn-primary">Login</a>
+
       {{-- <button class="btn btn-light" onclick="redirect('/books')">Browse Books</button> --}}
     </div>
   </section>

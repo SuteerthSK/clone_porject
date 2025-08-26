@@ -9,6 +9,20 @@ use App\Jobs\RecalculateRecommendationsJob;
 
 class BookController extends Controller
 {
+    public function index(Request $r)
+{
+    $q = $r->get('q','');
+    $books = Book::with('author')
+        ->when($q, function($query) use ($q) {
+            $query->where('title','like',"%{$q}%")
+                  ->orWhereHas('author', fn($q2)=> $q2->where('name','like',"%{$q}%"));
+        })
+        ->orderBy('created_at','desc')
+        ->paginate(12);
+
+    return view('books.index', compact('books','q'));
+}
+
     public function search(Request $r)
     {
         $q = $r->get('q','');

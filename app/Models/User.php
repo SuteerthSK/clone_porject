@@ -11,7 +11,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['name','email','password','bio','avatar'];
+    protected $fillable = ['name','email','password'];
     protected $hidden = ['password'];
 
     public function getJWTIdentifier() { return $this->getKey(); }

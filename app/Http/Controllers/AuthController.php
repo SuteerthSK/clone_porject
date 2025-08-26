@@ -21,25 +21,28 @@ class AuthController extends Controller
             'email'=>$data['email'],
             'password'=>bcrypt($data['password'])
         ]);
-        $token = JWTAuth::fromUser($user);
-        return view('auth.login')->with('success', 'Account created! Please log in.');
-
-
+       
+        return response()->json($user, 201);
     }
 
-    public function login(Request $r)
-    {
-        $credentials = $r->only('email','password');
-        if (!$token = auth('api')->attempt($credentials)) {
-            return back()->withErrors(['email'=>'Invalid credentials']);
-        }
-        return redirect()->route('home')->with('token', $token);
+   public function login(Request $r)
+{
+    $credentials = $r->only('email','password');
+
+    if (!$token = auth('api')->attempt($credentials)) {
+        return response()->json(['email'=>'Invalid credentials'], 401);
     }
+    $user = auth('api')->user();
+
+    return response()->json(['token' => $token, 'user' => $user]);
+}
+
 
     public function logout()
     {
-        auth('api')->logout();
-        return response()->json(['message'=>'Logged out']);
+       
+    auth('api')->logout();
+    return response()->json(['message'=>'Logged out']);
     }
 
     public function me()
