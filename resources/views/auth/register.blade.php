@@ -1,41 +1,45 @@
-@extends('layouts.app')
-@section('content')
-<h1 class="text-2xl font-bold mb-4">Register</h1>
-<form method="POST" id="register-form" action="" class="bg-white p-6 rounded shadow max-w-md">
-  @csrf
-  <label class="block text-sm">Name</label>
-  <input name="name" class="border rounded p-2 w-full" required />
-  <label class="block text-sm mt-3">Email</label>
-  <input type="email" name="email" class="border rounded p-2 w-full" required />
-  <label class="block text-sm mt-3">Password</label>
-  <input type="password" name="password" class="border rounded p-2 w-full" required minlength="6"/>
-  <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Create Account</button>
-</form>
-<script>
-  // Client-side form validation
-  document.getElementById('register-form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default form submission
-    const password = this.querySelector('input[name="password"]').value;
-    if (password.length < 6) {
-      event.preventDefault();
-      alert('Password must be at least 6 characters long.');
-    }
-    // Additional validation can be added here
-    $.ajax({
-      url: '{{ route('register') }}',
-      method: 'POST',
-      data: new FormData(this),
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        alert('Registration successful!');
-        window.location.href = '{{ route('auth.login.view') }}';
-      },
-      error: function(xhr) {
-        alert('Registration failed: ' + xhr.responseText);
-      }
-    });
+{{-- resources/views/auth/register.blade.php --}}
+@extends('layouts.bookverse')
 
-  });
-</script>
+@section('content')
+<div class="flex flex-1 items-center justify-center py-12 sm:py-16 md:py-24">
+    <div class="mx-auto w-full max-w-md px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6 rounded-lg bg-white p-8 shadow-lg">
+            <div class="text-center">
+                <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl" style="font-family: 'Newsreader', serif;">Create your BookVerse account</h1>
+                <p class="mt-2 text-sm text-gray-600">Discover and share books you love.</p>
+            </div>
+
+            <form method="POST" id="register-form" action="{{ route('register') }}" class="space-y-6">
+                @csrf
+                <div>
+                    <label class="sr-only" for="name">Full Name</label>
+                    <input class="form-input h-12 w-full rounded-md border-gray-300 px-4 placeholder-gray-500" id="name" name="name" placeholder="Full Name" required />
+                </div>
+                <div>
+                    <label class="sr-only" for="email">Email address</label>
+                    <input autocomplete="email" class="form-input h-12 w-full rounded-md border-gray-300 px-4 placeholder-gray-500" id="email" name="email" placeholder="Email address" required type="email"/>
+                </div>
+                <div>
+                    <label class="sr-only" for="password">Password</label>
+                    <input autocomplete="new-password" class="form-input h-12 w-full rounded-md border-gray-300 px-4 placeholder-gray-500" id="password" name="password" placeholder="Password (min 6 characters)" required type="password" minlength="6"/>
+                </div>
+
+                <div>
+                    <label for="role" class="sr-only">Account Type</label>
+                    <select id="role" name="role" class="form-input h-12 w-full rounded-md border-gray-300 px-4 text-gray-500">
+                        <option value="user" selected>I am a User</option>
+                        <option value="admin">I am an Admin</option>
+                    </select>
+                </div>
+
+                <div>
+                    <button class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)] py-3 px-4 text-base font-bold text-white shadow-sm hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]" type="submit">
+                        Sign Up
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endsection

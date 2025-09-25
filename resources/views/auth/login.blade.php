@@ -1,58 +1,46 @@
-@extends('layouts.app')
+@extends('layouts.bookverse')
+
 @section('content')
-<h1 class="text-2xl font-bold mb-4">Login</h1>
-@if ($errors->any())
-  <div class="p-3 mb-4 bg-red-100 border border-red-300 rounded">
-    {{ $errors->first() }}
-  </div>
-@endif
+<div class="flex flex-1 items-center justify-center py-12 sm:py-16 md:py-24">
+    <div class="mx-auto w-full max-w-md px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6 rounded-lg bg-white p-8 shadow-lg">
+            <div class="text-center">
+                <h1 class="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl" style="font-family: 'Newsreader', serif;">
+                    Welcome back to BookVerse
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">Sign in to continue.</p>
+            </div>
 
-<form method="POST" id="login-form" action="" class="bg-white p-6 rounded shadow max-w-md">
-  @csrf
-  <label class="block text-sm">Email</label>
-  <input type="email" name="email" class="border rounded p-2 w-full" required />
+            @if (session('success'))
+                <div class="rounded-md bg-green-100 p-4 text-sm font-medium text-green-700">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-  <label class="block text-sm mt-3">Password</label>
-  <input type="password" name="password" class="border rounded p-2 w-full" required />
-
-  <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Login</button>
-</form>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-  function setWithExpiry(key, value, ttl) {
-    const now = Date.now();
-    const item = {
-      value: value,
-      expiry: now + ttl
-    };
-    localStorage.setItem(key, JSON.stringify(item));
-  }
-
-  document.getElementById('login-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    $.ajax({
-      url: '{{ route('login') }}',
-      method: 'POST',
-      data: new FormData(this),
-      processData: false,
-      contentType: false,
-      success: function(response) {
-        alert('Login successful!');
-        console.log('User logged in:', response);
-
-        // Store with expiry (1 hour)
-        const ttl = 1000 * 60 * 60;
-        setWithExpiry('token', response.token, ttl);
-        setWithExpiry('user', response.user, ttl);
-
-        window.location.href = '{{ route('books.index') }}';
-      },
-      error: function(xhr) {
-        alert('Login failed: ' + xhr.responseText);
-      }
-    });
-  });
-</script>
+            <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                @csrf
+                <div>
+                    <label class="sr-only" for="email">Email address</label>
+                    <input autocomplete="email" class="form-input h-12 w-full rounded-md border-gray-300 px-4 placeholder-gray-500" id="email" name="email" placeholder="Email address" required type="email" value="{{ old('email') }}"/>
+                    @error('email')
+                        <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="sr-only" for="password">Password</label>
+                    <input autocomplete="current-password" class="form-input h-12 w-full rounded-md border-gray-300 px-4 placeholder-gray-500" id="password" name="password" placeholder="Password" required type="password"/>
+                </div>
+                <div>
+                    <button class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)] py-3 px-4 text-base font-bold text-white shadow-sm hover:bg-opacity-80 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-color)]" type="submit">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+            
+            <p class="text-center text-sm">
+                Don't have an account? <a href="{{ route('auth.register.view') }}" class="font-medium text-green-600 hover:underline">Sign up</a>
+            </p>
+        </div>
+    </div>
+</div>
 @endsection

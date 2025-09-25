@@ -1,129 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Goodreads Clone - Landing Page</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #333;
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 40px;
-      background: #f5f5f5;
-      border-bottom: 1px solid #ddd;
-    }
-    header h1 {
-      font-size: 24px;
-      color: #2c2c2c;
-    }
-    nav a {
-      margin: 0 15px;
-      text-decoration: none;
-      font-weight: bold;
-      color: #333;
-    }
-    nav a:hover {
-      color: #0073e6;
-    }
-    .hero {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #fdf0c2;
-      padding: 60px 20px;
-    }
-    .hero-content {
-      max-width: 600px;
-      text-align: center;
-    }
-    .hero-content h2 {
-      font-size: 36px;
-      margin-bottom: 20px;
-    }
-    .hero-content p {
-      font-size: 18px;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-    .btn {
-  display: inline-block;
-  margin: 10px;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;  /* removes underline */
-  transition: all 0.3s ease;
-}
+@extends('layouts.bookverse')
 
-.btn-primary {
-  background: #0073e6;
-  color: #fff;
-}
-.btn-primary:hover {
-  background: #005bb5;
-}
-
-.btn-dark {
-  background: #333;
-  color: #fff;
-}
-.btn-dark:hover {
-  background: #000;
-}
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: #f5f5f5;
-      border-top: 1px solid #ddd;
-      margin-top: 40px;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Header -->
-  <header>
-    <h1>📚 Goodreads Clone</h1>
-    <nav>
-      {{-- <a href="{{ route('books.index') }}">Books</a> --}}
-      <a href="{{ route('auth.register.view') }}">Register</a>
-      <a href="{{ route('auth.login.view') }}">Login</a>
-    </nav>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h2>Discover & Read More</h2>
-      <p>Tell us what books you love, and we’ll help you discover new favorites.  
-      Connect with friends and see what they’re reading on Goodreads Clone.</p>
-
-      <!-- Buttons -->
-      <a href="{{ route('auth.register.view') }}" class="btn btn-dark">Register</a>
-      <a href="{{ route('auth.login.view') }}" class="btn btn-primary">Login</a>
-
-      {{-- <button class="btn btn-light" onclick="redirect('/books')">Browse Books</button> --}}
+@section('content')
+<div class="relative text-center bg-stone-100 py-24 px-4 sm:px-6 lg:px-8">
+    <div class="absolute inset-0">
+        <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=3000&auto=format&fit=crop" alt="Library background">
+        <div class="absolute inset-0 bg-white/60 backdrop-blur-sm"></div>
     </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 Goodreads Clone. Built for learning.</p>
-  </footer>
-
-  <script>
-    function redirect(path) {
-      window.location.href = path;
-    }
-  </script>
-</body>
-</html>
+    <div class="relative max-w-2xl mx-auto">
+        <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl" style="font-family: 'Newsreader', serif;">
+            Discover & Read More
+        </h1>
+        <p class="mt-6 text-xl text-gray-700">
+            Tell us what books you love, and we’ll help you discover new favorites. Connect with friends and see what they’re reading on BookVerse.
+        </p>
+        <div class="mt-8 flex justify-center gap-4">
+            <a href="{{ route('auth.register.view') }}" class="inline-block rounded-md bg-[var(--primary-color)] px-6 py-3 text-base font-bold text-white shadow-lg transition-transform hover:scale-105">
+                Get Started
+            </a>
+            <a href="{{ route('auth.login.view') }}" class="inline-block rounded-md bg-white px-6 py-3 text-base font-bold text-gray-800 shadow-lg transition-transform hover:scale-105">
+                Sign In
+            </a>
+        </div>
+    </div>
+</div>
+@endsection

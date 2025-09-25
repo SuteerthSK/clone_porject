@@ -3,56 +3,61 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookController;
-use App\Http\Controllers\AuthorController;
-use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ShelfController;
-use App\Http\Controllers\GroupController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\ReadingChallengeController;
+use App\Http\Controllers\ReviewController;
 
-// Home
-Route::get('/', function() { return view('welcome'); })->name('home');
-Route::get('/register', function() { return view('auth.register'); })->name('auth.register');
-Route::middleware('auth:api')->post('/logout', [AuthController::class, 'logout']);
-// Route::get('/login', function() { return view('auth.login'); })->name('auth.login');
-// Route::view('/register', 'auth.register')->name('auth.register');
-// Route::view('/login', 'auth.login')->name('auth.login');
+// This main group will now attempt to authenticate the user on every request,
+// allowing the header to correctly show the user's logged-in state.
+Route::middleware('jwt.optional')->group(function () {
+    
+    Route::get('/', fn() => view('welcome'))->name('home');
 
+    // Auth Views
+    Route::view('/register', 'auth.register')->name('auth.register.view');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::view('/login', 'auth.login')->name('auth.login.view');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// // Public browsing
-Route::get('/books/search', [BookController::class, 'search'])->name('books.search');
- Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
- Route::get('/authors/{author}', [AuthorController::class, 'show'])->name('authors.show');
-Route::get('/books', [BookController::class, 'index'])->name('books.index');
+    // Public Books routes
+    Route::get('/books', [BookController::class, 'index'])->name('books.index');
+    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
-// // Auth (JWT)
-Route::view('/auth/register', 'auth.register')->name('auth.register.view');
-Route::view('/auth/login', 'auth.login')->name('auth.login.view');
-// Route::get('/login', [AuthController::class, 'register'])->name('auth.register.view');
-// Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+    // Protected User Routes (these require a valid login)
+    // The inner 'jwt' middleware will redirect to login if the user is not authenticated.
+    Route::middleware('jwt')->group(function () {
+        Route::get('/my-books', [ShelfController::class, 'myBooksIndex'])->name('my-books.view');
+        Route::get('/favourites', [FavoriteController::class, 'index'])->name('favourites.view');
+        Route::get('/want-to-read', [ShelfController::class, 'wantToReadIndex'])->name('want_to_read.view');
 
-// // Protected API-like routes guarded by JWT
- Route::middleware(['jwt.auth'])->group(function () {
-     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
-     Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
+        Route::post('/books/{book}/toggle-favorite', [FavoriteController::class, 'toggle'])->name('books.toggle_favorite');
+        Route::post('/books/{book}/shelves', [ShelfController::class, 'addBook'])->name('shelves.add');
+        Route::delete('/books/{book}/shelves', [ShelfController::class, 'removeBook'])->name('shelves.remove');
+        Route::get('/shelves', [ShelfController::class, 'listShelves'])->name('shelves.list');
+        Route::post('/books/{book}/mark-as-read', [ShelfController::class, 'markAsRead'])->name('shelves.mark_as_read');
+        Route::post('/books/{book}/unmark-as-read', [ShelfController::class, 'unmarkAsRead'])->name('shelves.unmark_as_read');
 
-//     // Shelves
-     Route::post('/shelves', [ShelfController::class, 'create'])->name('shelves.create');
-     Route::post('/shelves/{book}/add', [ShelfController::class, 'addBook'])->name('shelves.add');
-     Route::post('/shelves/{book}/remove', [ShelfController::class, 'removeBook'])->name('shelves.remove');
+        // Reviews
+        Route::get('/books/{book}/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+        Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-//     // Reviews
-     Route::post('/books/{book}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-     Route::post('/reviews/{review}/like', [ReviewController::class, 'like'])->name('reviews.like');
-     Route::post('/reviews/{review}/comment', [ReviewController::class, 'comment'])->name('reviews.comment');
+        // Challenge
+        Route::get('/challenge', [ReadingChallengeController::class, 'edit'])->name('challenges.edit');
+        Route::post('/challenge', [ReadingChallengeController::class, 'update'])->name('challenges.update');
 
-//     // Recommendations trigger (enqueue recalculation)
-     Route::post('/recommendations/recalc', [BookController::class, 'recalcRecommendations'])->name('recs.recalc');
-
-//     // Groups
-     Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
-     Route::post('/groups/{group}/join', [GroupController::class, 'join'])->name('groups.join');
-     Route::post('/groups/{group}/posts', [GroupController::class, 'post'])->name('groups.post');
-
-//     // Reading challenge
-     Route::post('/reading-challenges', [ReadingChallengeController::class, 'createOrUpdate'])->name('challenge.upsert');
- });
+        // Admin Routes (these require both a valid login and admin role)
+        Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+            Route::get('/books', [AdminController::class, 'index'])->name('books.index');
+            Route::get('/books/create', [AdminController::class, 'create'])->name('books.create');
+            Route::post('/books', [AdminController::class, 'store'])->name('books.store');
+            Route::delete('/books/{book}', [AdminController::class, 'destroy'])->name('books.destroy');
+            Route::resource('authors', AuthorController::class)->except(['show']);
+            Route::get('/books/{book}/edit', [AdminController::class, 'edit'])->name('books.edit');
+            Route::put('/books/{book}', [AdminController::class, 'update'])->name('books.update');
+        });
+    });
+});
