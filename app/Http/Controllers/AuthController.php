@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
-    /**
-     * Register new user
-     */
+    
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -39,9 +37,7 @@ class AuthController extends Controller
             ->with('success', 'Registration successful! Please log in.');
     }
 
-    /**
-     * Login with JWT and store token in a session-only HttpOnly cookie
-     */
+    
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -50,21 +46,20 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
         }
 
-        // ✅ Create a session cookie by setting the lifetime to 0 minutes.
-        // This cookie will be automatically deleted when the browser is closed.
+        
         $cookie = cookie(
             'token',
             $token,
-            0,          // ✅ *** THIS IS THE CHANGE ***
-            '/',        // path
-            null,       // domain
-            false,      // secure (set true in production with HTTPS)
-            true,       // httpOnly
-            false,      // raw
-            'Lax'       // sameSite
+            0,          
+            '/',        
+            null,       
+            false,      
+            true,       
+            false,      
+            'Lax'       
         );
 
-        // Redirect based on role and attach cookie
+        
         $redirect = Auth::user()->role === 'admin'
             ? route('admin.books.index')
             : route('books.index');
@@ -72,9 +67,7 @@ class AuthController extends Controller
         return redirect()->intended($redirect)->withCookie($cookie);
     }
 
-    /**
-     * Logout (invalidate token and remove cookie)
-     */
+   
     public function logout(Request $request)
     {
         try {
@@ -83,18 +76,16 @@ class AuthController extends Controller
                 JWTAuth::setToken($token)->invalidate();
             }
         } catch (\Exception $e) {
-            // ignore errors from invalidation
+            
         }
 
-        // Forget cookie with Laravel helper
+        
         $forget = Cookie::forget('token');
 
         return redirect()->route('auth.login.view')->withCookie($forget);
     }
 
-    /**
-     * Return authenticated user (supports header or cookie)
-     */
+    
     public function me(Request $request)
     {
         try {

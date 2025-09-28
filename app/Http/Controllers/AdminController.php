@@ -8,27 +8,21 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    /**
-     * Display the list of all books in the admin panel.
-     */
+    
     public function index()
     {
         $books = Book::with('author')->latest()->get();
         return view('admin.books.index', compact('books'));
     }
 
-    /**
-     * Show the form for creating a new book.
-     */
+    
     public function create()
     {
         $authors = Author::orderBy('name')->get();
         return view('admin.books.create', compact('authors'));
     }
 
-    /**
-     * Store a newly created book in the database.
-     */
+    
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -40,7 +34,7 @@ class AdminController extends Controller
 
         $imageUrl = null;
         if ($request->hasFile('cover_image')) {
-            // Upload file to Cloudinary using the uploadApi
+            
             $uploadedFile = cloudinary()->uploadApi()->upload(
                 $request->file('cover_image')->getRealPath()
             );
@@ -48,12 +42,12 @@ class AdminController extends Controller
             $imageUrl = $uploadedFile['secure_url'];
         }
 
-        // Generate a unique 13-digit ISBN
+        
         do {
             $isbn = (string) random_int(1000000000000, 9999999999999);
         } while (Book::where('isbn', $isbn)->exists());
 
-        // Create the new book record with the Cloudinary URL + auto ISBN
+        
         Book::create([
             'title'       => $validated['title'],
             'author_id'   => $validated['author_id'],

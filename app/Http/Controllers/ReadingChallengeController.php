@@ -8,26 +8,21 @@ use Illuminate\Support\Facades\Auth;
 
 class ReadingChallengeController extends Controller
 {
-    /**
-     * Show the form for editing the reading challenge.
-     */
     public function edit()
     {
         $user = Auth::user();
         $year = now()->year;
 
-        // Find the challenge. If it doesn't exist, create it with default values.
+        
         $challenge = ReadingChallenge::firstOrCreate(
             ['user_id' => $user->id, 'year' => $year],
-            ['goal_count' => 20] // Default goal from your setup
+            ['goal_count' => 20] 
         );
 
         return view('challenges.edit', compact('challenge'));
     }
 
-    /**
-     * Update the user's reading challenge goal.
-     */
+    
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -42,7 +37,7 @@ class ReadingChallengeController extends Controller
             ['goal_count' => $data['goal_count']]
         );
 
-        // Redirect back to the main books page with a success message
+        
         return redirect()->route('books.index')->with('status', 'Reading goal updated successfully!');
     }
 }

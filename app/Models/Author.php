@@ -9,7 +9,7 @@ class Author extends Model
 {
     use HasFactory;
     
-    // 👇 REMOVED 'photo' from this array
+   
     protected $fillable = ['name', 'biography'];
 
     public function books() { return $this->hasMany(Book::class); }

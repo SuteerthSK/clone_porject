@@ -14,7 +14,7 @@
     <form method="POST" 
           action="{{ isset($book) ? route('admin.books.update', $book->id) : route('admin.books.store') }}" 
           enctype="multipart/form-data" 
-          class="space-y-6">
+          class="space-y-6 bg-gray-800 p-8 rounded-lg shadow-md">
         @csrf
         @if(isset($book))
             @method('PUT')
@@ -22,15 +22,16 @@
 
         {{-- Title --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700">Title</label>
+            <label class="block text-sm font-medium text-gray-300">Title</label>
             <input type="text" name="title" value="{{ old('title', $book->title ?? '') }}" 
-                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                   class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-green-500 focus:ring-green-500">
         </div>
 
         {{-- Author --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700">Author</label>
-            <select name="author_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+            <label class="block text-sm font-medium text-gray-300">Author</label>
+            <select name="author_id" 
+                    class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-green-500 focus:ring-green-500">
                 <option value="">Select an author</option>
                 @foreach($authors as $author)
                     <option value="{{ $author->id }}" 
@@ -43,28 +44,30 @@
 
         {{-- Description --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700">Description</label>
+            <label class="block text-sm font-medium text-gray-300">Description</label>
             <textarea name="description" rows="4" 
-                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">{{ old('description', $book->description ?? '') }}</textarea>
+                      class="mt-1 block w-full rounded-md border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-green-500 focus:ring-green-500">{{ old('description', $book->description ?? '') }}</textarea>
         </div>
 
         {{-- Book Cover --}}
         <div>
-            <label class="block text-sm font-medium text-gray-700">Book Cover</label>
+            <label class="block text-sm font-medium text-gray-300">Book Cover</label>
             @if(isset($book) && $book->image)
-                <img src="{{ $book->image }}" alt="Current cover" class="w-24 h-32 object-cover rounded mb-2">
+                <img src="{{ $book->image }}" alt="Current cover" class="w-24 h-32 object-cover rounded mb-2 border border-gray-600">
             @endif
-            <input type="file" name="cover_image" class="mt-1 block w-full text-sm text-gray-500">
+            <input type="file" name="cover_image" class="mt-1 block w-full text-sm text-gray-400">
         </div>
+
+        {{-- Validation Errors --}}
         @if ($errors->any())
-    <div class="bg-red-100 text-red-800 p-3 rounded">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+            <div class="bg-red-700/20 text-red-400 p-3 rounded">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         {{-- Submit --}}
         <div>

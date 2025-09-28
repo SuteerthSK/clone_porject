@@ -21,7 +21,7 @@ class BookController extends Controller
                 ->pluck('books.id')
                 ->toArray();
             
-            // Get the user's reading challenge for the current year
+            
             $challenge = Auth::user()
                 ->readingChallenges()
                 ->where('year', now()->year)
@@ -33,7 +33,7 @@ class BookController extends Controller
 
     public function show(Book $book)
     {
-        // Load relationships
+        
         $book->load(['author']);
         
         $bookShelfState = null;
